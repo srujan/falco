@@ -40,7 +40,7 @@
   
 #macros and rules to detect modification of falco rules or tampering of falco log
 - macro: falco_dir
-   condition: evt.arg[1] startswith /etc/falco
+  condition: evt.arg[1] startswith /etc/falco
    
 - rule: Modify falco files
    desc: attempt to modify falco files
@@ -50,7 +50,7 @@
    tags: [falco]
    
 - macro: falco_log
-   condition: evt.arg[1] startswith tail /var/log/falco_events.log
+  condition: evt.arg[1] startswith tail /var/log/falco_events.log
    
 - rule: Tamper falco log
    desc: attempt to tamper falco log by non-falco binary 
