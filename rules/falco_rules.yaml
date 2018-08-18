@@ -37,6 +37,27 @@
 
 - macro: spawned_process
   condition: evt.type = execve and evt.dir=<
+  
+#macros and rules to detect modification of falco rules or tampering of falco log
+- macro: falco_dir
+   condition: evt.arg[1] startswith /etc/falco
+   
+- rule: Modify falco files
+   desc: attempt to modify falco files
+   condition: open_write and falco_dir
+   output: "Modifying falco file (user=%user.name command=%proc.cmdline file=%fd.name)"
+   priority: WARNING
+   tags: [falco]
+   
+- macro: falco_log
+   condition: evt.arg[1] startswith tail /var/log/falco_events.log
+   
+- rule: Tamper falco log
+   desc: attempt to tamper falco log by non-falco binary 
+   condition: open_write and falco_log and proc.name in (falco)
+   output: "Tampering falco log (user=%user.name command=%proc.cmdline file=%fd.name)"
+   priority: ERROR
+   tags: [falco]
 
 # File categories
 - macro: bin_dir
